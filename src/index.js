@@ -12,9 +12,27 @@ import patch from './mysnabbdom/patch.js'
 //   ])
 // ])
 
-const myVnode = h('h1', {}, '你好')
+// const myVnode = h('h1', {}, '你好')
+const myVnode = h('ul', {}, [
+  h('li', {}, 'A'),
+  h('li', {}, 'B'),
+  h('li', {}, [
+    h('p', {}, 'C'),
+    h('p', {}, 'D'),
+  ])
+])
+
 
 const container = document.getElementById('container')
-
+const btn = document.getElementById('btn')
 patch(container, myVnode)
+
+const myVnode2 = h('div', {}, [
+  h('p', {}, '1'),
+  h('p', {}, '2')
+])
+
+btn.onclick = function () {
+  patch(myVnode, myVnode2)
+}
 // console.log(myVnode);

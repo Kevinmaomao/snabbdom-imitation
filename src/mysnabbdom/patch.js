@@ -12,8 +12,15 @@ export default function (oldVnode, newVnode) {
     console.log('是同一个节点');
   } else {
   // 3.不是同一个节点，暴力插入新的，删除旧的
-    console.log('不是同一个节点');
-    createElement(newVnode, oldVnode.elm)
+    // console.log('不是同一个节点');
+    let newDom = createElement(newVnode)
+    // 插入到老节点之前
+    if (oldVnode.elm && newDom) {
+      oldVnode.elm.parentNode.insertBefore(newDom, oldVnode.elm)
+    }
+    // 删除老节点
+    oldVnode.elm.parentNode.removeChild(oldVnode.elm)
+
   }
 
 }
