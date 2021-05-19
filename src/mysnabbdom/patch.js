@@ -1,5 +1,6 @@
 import vnode from './vnode.js'
 import createElement from './createElement.js'
+import patchVnode from './patchVnode.js'
 
 export default function (oldVnode, newVnode) {
   // 1.判断传入的第一个参数，是DOM节点还是vnode
@@ -10,6 +11,7 @@ export default function (oldVnode, newVnode) {
   // 2.判断oldVnode和newVnode是不是同一个节点
   if (oldVnode.sel === newVnode.sel && oldVnode.key === newVnode.key) {
     console.log('是同一个节点');
+    patchVnode(oldVnode, newVnode)
   } else {
   // 3.不是同一个节点，暴力插入新的，删除旧的
     // console.log('不是同一个节点');
