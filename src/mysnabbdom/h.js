@@ -4,8 +4,6 @@ import vnode from './vnode.js'
 // h('div', {}, [])
 // h('div', {}, h())
 export default function h(sel, data, c) {
-
-  console.log(sel);
   if (arguments.length !== 3) {
     throw new Error('必须传3个参数')
   }

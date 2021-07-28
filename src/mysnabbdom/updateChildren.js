@@ -7,7 +7,7 @@ function checkSameVnode(a, b) {
 }
 
 export default function updateChildren(parentElm, oldCh, newCh) {
-  console.log(oldCh, newCh);
+  // console.log(oldCh, newCh);
   // 旧前
   let oldStartIdx = 0;
   // 旧前节点
@@ -24,11 +24,21 @@ export default function updateChildren(parentElm, oldCh, newCh) {
   let newEndIdx = newCh.length - 1;
   // 新后节点
   let newEndVnode = newCh[newEndIdx];
+  // 做缓存
+  let keyMap = null;
   
   while(newStartIdx <= newEndIdx && oldStartIdx <= oldEndIdx) {
     console.log('☆');
+    if (oldStartVnode == null) {
+      oldStartVnode = oldCh[++oldStartIdx] // Vnode might have been moved left
+    } else if (oldEndVnode == null) {
+      oldEndVnode = oldCh[--oldEndIdx]
+    } else if (newStartVnode == null) {
+      newStartVnode = newCh[++newStartIdx]
+    } else if (newEndVnode == null) {
+      newEndVnode = newCh[--newEndIdx]
+    } else if (checkSameVnode(oldStartVnode, newStartVnode)) {
     // 1. 新前和旧前
-    if (checkSameVnode(oldStartVnode, newStartVnode)) {
       console.log('1. 新前和旧前');
       patchVnode(oldStartVnode, newStartVnode)
       oldStartVnode = oldCh[++oldStartIdx]
@@ -49,6 +59,7 @@ export default function updateChildren(parentElm, oldCh, newCh) {
 
       newEndVnode = newCh[--newEndIdx]
       oldStartVnode = oldCh[++oldStartIdx]
+      console.log(parentElm);
     } else if (checkSameVnode(newStartVnode, oldEndVnode)) {
     // 4. 新前和旧后
       console.log('4. 新前和旧后');
@@ -60,27 +71,62 @@ export default function updateChildren(parentElm, oldCh, newCh) {
       newStartVnode = newCh[++newStartIdx]
     } else {
     // 5. 都没有找到
+
+    console.log('5.没有匹配');
+      // 寻找key的map
+      if (!keyMap) {
+        keyMap = {}
+        for(let i = oldStartIdx; i <= oldEndIdx; i++) {
+          const key = oldCh[i].key
+          if (key != undefined) {
+            keyMap[key] = i
+          }
+        }
+      }
+      // 寻找当前这项（newStartIdx）在keyMap中的映射的位置序号
+      const idxInOld = keyMap[newStartVnode.key]
+      console.log('***',idxInOld);
+
+      // 判断，如果idxInOld是undefined表示它是全新的项
+      if (idxInOld == undefined) {
+        // true
+
+        // 被加入的项（就是newStartVnode这项）现在不是真正的DOM
+        parentElm.insertBefore(createElement(newStartVnode), oldStartVnode.elm)
+
+      } else {
+        // false，则移动
+        const elmToMove = oldCh[idxInOld];
+        patchVnode(elmToMove, newStartVnode);
+        // console.log(elmToMove);
+        // 把这项设置为undefined，表示我已经处理完这项了
+        oldCh[idxInOld] = undefined;
+        // 移动，调用insertBefore也可以实现移动
+        parentElm.insertBefore(elmToMove.elm, oldStartVnode.elm)
+      }
+      // 只移新的头
+      newStartVnode = newCh[++newStartIdx]
     }
   }
   // 继续看看有没有剩余的。循环结束了start还是比old小
   if(newStartIdx <= newEndIdx) {
     console.log('new还剩一些');
-    const before = newCh[newEndIdx + 1] == null ? null : newCh[newEndIdx + 1].elm
-    // console.log(before);
+    // const before = newCh[newEndIdx + 1] == null ? null :  newCh[newEndIdx + 1].elm
+
+    // const before = newCh[newEndIdx + 1] == null ? null :  createElement(newCh[newEndIdx + 1])
+    console.log('before', newCh[newEndIdx + 1]);
     for(let i = newStartIdx; i <= newEndIdx; i++) {
       // brefore为null时, insertBefore等于appendChild
-      parentElm.insertBefore(createElement(newCh[i]), before)
+      parentElm.insertBefore(createElement(newCh[i]), oldCh[oldStartIdx].elm)
     }
   } else if (oldStartIdx <= oldEndIdx) {
     console.log('old还剩一些');
     for (let i = oldStartIdx; i <= oldEndIdx; i++) {
-      parentElm.removeChild(oldCh[i].elm)
+      if(oldCh[i]) {
+        parentElm.removeChild(oldCh[i].elm)
+      }
     }
   }
-
-
-
-
 }
 
 

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <ul id="list">
+    <li id="coffer">coffer</li><li id="tea">tea</li>
+  </ul>
+  <button onclick="clickFn()">按钮</button>
+
+  <script>
+    function clickFn() {
+      // var li = document.createElement("li");
+      // var txt = document.createTextNode('water')
+
+      // li.appendChild(txt);
+      // // console.log(li);
+
+      // // var list = document.getElementById('list')
+
+      // // list.insertBefore(li, list.childNodes[0])
+      // console.log(document.getElementById('tea').previousSibling);
+    }
+
+    function foo() {
+      var x= 3;
+      function bar() {
+        console.log(x);
+      }
+      return bar
+    }
+
+    var x = 2;
+    var f = foo()
+    f()
+
+  </script>
+</body>
+</html>
